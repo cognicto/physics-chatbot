@@ -1,0 +1,14 @@
+images:
+  apiServerImage:
+    pullPolicy: IfNotPresent
+    repository: physics-chatbot  # Image is available locally
+    tag: latest                  # Tag of the image (default is "latest")
+
+config:
+  langGraphCloudLicenseKey: "YOUR KEY"  # Not required for local deployments
+
+apiServer:
+  deployment:
+    extraEnv:
+      - name: OPENAI_API_KEY
+        value: "YOUR API KEY"
