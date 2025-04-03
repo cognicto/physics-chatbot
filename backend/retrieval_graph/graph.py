@@ -16,12 +16,6 @@ from backend.retrieval_graph.configuration import AgentConfiguration
 from backend.retrieval_graph.researcher_graph.graph import graph as researcher_graph
 from backend.retrieval_graph.state import AgentState, InputState, Router
 from backend.utils import format_docs, load_chat_model
-from langgraph.checkpoint.memory import MemorySaver
-import os
-os.environ["LANGCHAIN_PROJECT"]="physics-chatbot"
-
-
-memory = MemorySaver()  # Initialize memory for persistent state
 
 
 async def analyze_and_route_query(
@@ -150,7 +144,9 @@ async def create_research_plan(
     messages = [
         {"role": "system", "content": configuration.research_plan_system_prompt}
     ] + state.messages
-    response = cast(Plan, await model.ainvoke(messages))
+    response = cast(
+        Plan, await model.ainvoke(messages, {"tags": ["langsmith:nostream"]})
+    )
     return {
         "steps": response["steps"],
         "documents": "delete",
@@ -238,4 +234,3 @@ builder.add_edge("respond", END)
 # Compile into a graph object that you can invoke and deploy.
 graph = builder.compile()
 graph.name = "RetrievalGraph"
-
